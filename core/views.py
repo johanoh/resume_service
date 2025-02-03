@@ -1,7 +1,7 @@
+from typing import List
 import random
 import logging
 
-from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
@@ -18,12 +18,12 @@ MOCK_WORK_EXPERIENCES = [
     "Frontend Developer at QQQ"
 ]
 
-def generate_mock_resume(error=False):
+def generate_mock_resume(error: bool = False) -> dict:
     if error:
         return {
             "id": str(uuid4()),
-            "skills": None,
-            "work_experiences": None,
+            "skills": [],
+            "work_experiences": [],
             "error": "Invalid resume data",
         }
     
@@ -49,11 +49,12 @@ class MockResumeAPI(APIView, MockResumePagination):
     def get(self, request):
         user_ip = request.META.get("REMOTE_ADDR", "Unknown IP")
         logger.info(f"API Accessed: {request.path} from {user_ip}")
-        
         count = int(request.GET.get("count", 50)) 
         error_mode = request.GET.get("errors", "false").lower() == "true"
 
-        sample_resumes = [generate_mock_resume(error=error_mode) for _ in range(count)]
+        sample_resumes: List[dict] = [generate_mock_resume() for _ in range(count)]
+        if error_mode:
+            sample_resumes[-1] = generate_mock_resume(error=True)
 
         paginated_data = self.paginate_queryset(sample_resumes, request, view=self)
         return self.get_paginated_response(paginated_data)
