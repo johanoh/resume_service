@@ -91,7 +91,60 @@ If an error occurs during parsing or validation, the system logs the error but d
 
 This layer provides endpoints for interacting with the service and mocking external API calls.
 
+- TThe mock external API is implemented in the `core/views.py` file. It simulates an external service that provides randomized resume data. It supports pagination, allows users to set the page size, and can generate bad data for testing.
+- The skill search view is located in `resume/views.py`. It enables users to query resumes based on one or more skills. The API supports both `AND` and `OR` search criteria, allowing for flexible searches. Further details are provided below.
+
 ## How to Use
+
+### External API
+
+The trigger the external API, use:
+```
+GET http://0.0.0.0:8000/api/v1/test-data/
+```
+
+This API is rate limited to 30 requests per second to comply with the assignment requirements.
+#### Parameters
+You can pass in a number of parameters into it:
+
+| Key        | Type  | Default | Description |
+|------------|------|---------|-------------|
+| `count`      | int  | 50  | Number of resumes the internal endpoint should generate. |
+| `per_page`   | int  | 10   | Number of resumes per page. |
+| `errors` | bool | false | If `true`, some resumes will have parsing errors for testing. |
+
+#### Example API Request
+
+```sh
+curl http://0.0.0.0:8000/api/v1/test-data/?count=50&per_page=1&errors=true
+```
+
+#### Response
+
+```json
+{
+    "count": 50,
+    "next": "http://0.0.0.0:8000/api/v1/test-data/?count=50&errors=true&page=2&per_page=1",
+    "previous": null,
+    "results": [
+        {
+            "id": "2d5b14ba-11da-48c3-90a0-4548a7917c22",
+            "skills": [
+                "AWS",
+                "Docker"
+            ],
+            "work_experiences": [
+                "DevOps Engineer at CloudCorp",
+                "Frontend Developer at QQQ",
+                "Data Scientist at AI Labs"
+            ]
+        }
+    ]
+}
+```
+
+The next page can be accessed via the `next` field in the response.
+
 
 ### Trigger Data Collection
 
