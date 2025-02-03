@@ -122,7 +122,7 @@ curl -X POST "http://localhost:8000/api/v1/data-collection/trigger/" \
 
 ```json
 {
-    "message": "Data collection started: count 100, per_page 10, batch_size 10, error_mode: False"
+   "message": "Data collection started: count 100, per_page 10, batch_size 10, error_mode: False"
 }
 ```
 ![alt text](image.png)
@@ -142,7 +142,7 @@ GET http://localhost:8000/api/v1/resumes/search/?skills=React,SQL
 ```
 
 ```sh
-    curl http://localhost:8000/api/v1/resumes/search/?skills=React,SQ
+curl http://localhost:8000/api/v1/resumes/search/?skills=React,SQL
 ```
 ![alt text](image-2.png)
 
@@ -154,7 +154,7 @@ GET http://localhost:8000/api/v1/resumes/search/?skills=React,SQL&match=all
 ```
 
 ```sh
-    curl http://localhost:8000/api/v1/resumes/search/?skills=React,SQL&match=all
+curl http://localhost:8000/api/v1/resumes/search/?skills=React,SQL&match=all
 ```
 ![alt text](image-1.png)
 ## TODO (Future Improvements)
