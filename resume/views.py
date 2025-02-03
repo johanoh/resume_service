@@ -5,6 +5,7 @@ from resume.models import Resume
 from django.db.models import Q
 from resume.serializers import ResumeSerializer
 
+
 class ResumeFilter(FilterSet):
     skills = CharFilter(method="filter_skills")
     work_experiences = CharFilter(method="filter_work_experiences")

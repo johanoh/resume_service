@@ -9,14 +9,25 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
-MOCK_SKILLS = ["Python", "Django", "Flask", "SQL", "AWS", "React", "Docker", "NOSQL", "Node"]
+MOCK_SKILLS = [
+    "Python",
+    "Django",
+    "Flask",
+    "SQL",
+    "AWS",
+    "React",
+    "Docker",
+    "NOSQL",
+    "Node",
+]
 MOCK_WORK_EXPERIENCES = [
     "Software Engineer at XYZ",
     "Backend Developer at ABC",
     "Data Scientist at AI Labs",
     "DevOps Engineer at CloudCorp",
-    "Frontend Developer at QQQ"
+    "Frontend Developer at QQQ",
 ]
+
 
 def generate_mock_resume(error: bool = False) -> dict:
     if error:
@@ -26,16 +37,18 @@ def generate_mock_resume(error: bool = False) -> dict:
             "work_experiences": [],
             "error": "Invalid resume data",
         }
-    
+
     return {
         "id": str(uuid4()),
         "skills": random.sample(MOCK_SKILLS, random.randint(1, 3)),
-        "work_experiences": random.sample(MOCK_WORK_EXPERIENCES, random.randint(1, 4))
+        "work_experiences": random.sample(MOCK_WORK_EXPERIENCES, random.randint(1, 4)),
     }
+
 
 class MockResumePagination(PageNumberPagination):  # custom mock pagination
     page_size_query_param = "per_page"
     page_size = 10
+
 
 class MockResumeAPI(APIView, MockResumePagination):
     """
@@ -49,7 +62,7 @@ class MockResumeAPI(APIView, MockResumePagination):
     def get(self, request):
         user_ip = request.META.get("REMOTE_ADDR", "Unknown IP")
         logger.info(f"API Accessed: {request.path} from {user_ip}")
-        count = int(request.GET.get("count", 50)) 
+        count = int(request.GET.get("count", 50))
         error_mode = request.GET.get("errors", "false").lower() == "true"
 
         sample_resumes: List[dict] = [generate_mock_resume() for _ in range(count)]
