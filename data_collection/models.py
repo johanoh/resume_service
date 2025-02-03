@@ -24,7 +24,7 @@ class Statuses(models.TextChoices):
     PENDING = "pending", _(STATUS_PENDING)
     ERROR = "error", _(STATUS_ERROR)
     PROCESSING = "in_progress", _(STATUS_IN_PROGRESS)
-    PROCESSED = "completed", _(STATUS_COMPLETED)
+    COMPLETED = "completed", _(STATUS_COMPLETED)
 
 
 class DataRequest(TrackerMixin):
@@ -47,6 +47,10 @@ class DataRequest(TrackerMixin):
         blank=False,
         default=Services.GLOBAL_TECH_ATS,
     )
+
+    @cached_property
+    def completion_time(self):
+        return self.updated_at - self.created_at
 
 
 class RawData(TrackerMixin):
