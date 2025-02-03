@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 from core.exceptions import BusinessError
 
-from data_collection.models import RawData, Statuses
+from data_collection.models import RawData, Statuses, DataRequest
 
 from resume.models import Resume
 from resume.services.processor import process
@@ -16,6 +16,11 @@ from resume.services.processor import process
 @shared_task
 def process_resumes(raw_data_id: int, batch_size: int = 1, sleep_time: int = 2):
     raw_data = RawData.objects.get(id=raw_data_id)
+    data_request = raw_data.data_request
+    if data_request.status != Statuses.PROCESSING:
+        data_request.status = Statuses.PROCESSING
+        data_request.save()
+
     batches = [
         raw_data.parsed_data[i : i + batch_size]
         for i in range(0, len(raw_data.parsed_data), batch_size)
@@ -29,10 +34,22 @@ def process_resumes(raw_data_id: int, batch_size: int = 1, sleep_time: int = 2):
             }
         )
 
+    raw_data = data_request.raw_data.all()
+    if (
+        raw_data.filter(status=Statuses.ERROR).distinct("status").exists()
+    ):  # check statuses of all raw data and set the data request to the right status
+        data_request.status = Statuses.ERROR
+        data_request.save()
+    if raw_data.filter(status=Statuses.PROCESSED).distinct("status").exists():
+        data_request.status = Statuses.PROCESSED
+        data_request.save()
+
 
 @shared_task
 def batch_process_resumes(raw_resumes: list, raw_data_id: int, sleep_time: int = 2):
     raw_data = RawData.objects.get(id=raw_data_id)
+    raw_data.status = Statuses.PROCESSING
+    raw_data.save()
     resumes: List[Resume] = []
     for raw_resume in raw_resumes:
         try:

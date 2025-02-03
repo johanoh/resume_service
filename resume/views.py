@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
 from resume.models import Resume
@@ -8,9 +8,10 @@ from resume.serializers import ResumeSerializer
 
 class ResumeFilter(FilterSet):
     skills = CharFilter(method="filter_skills")
-    work_experiences = CharFilter(method="filter_work_experiences")
 
-    def filter_skills(self, queryset, name, value):
+    def filter_skills(
+        self, queryset, name, value
+    ):  # name required because of django_filters
         match_type = self.request.GET.get("match", "any")  # Default to OR
         skills_list = value.split(",")
 
@@ -25,7 +26,7 @@ class ResumeFilter(FilterSet):
 
     class Meta:
         model = Resume
-        fields = ["skills", "work_experiences"]
+        fields = ["skills"]
 
 
 class ResumeListAPI(ListAPIView):
@@ -33,4 +34,4 @@ class ResumeListAPI(ListAPIView):
     serializer_class = ResumeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ResumeFilter
-    search_fields = ["skills", "work_experiences"]
+    search_fields = ["skills"]
