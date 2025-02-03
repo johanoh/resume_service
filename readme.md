@@ -11,21 +11,21 @@ This repository is a Django project implementing a coding assignment for **Hire 
    ```sh
    docker-compose build
    ```
-2. Start the service:
+2. Copy and fill out the .env.example file
+   ```sh
+   cp .env.example .env
+   ```
+3. Start the service:
    ```sh
    docker-compose up
    ```
-3. Enter the web service container:
+4. Enter the web service container:
    ```sh
    docker-compose exec web bash
    ```
-4. Run migrations inside the web service container:
+5. Run migrations inside the web service container:
    ```sh
    python -m manage migrate
-   ```
-5. Copy and fill out the .env.example file
-   ```sh
-   cp .env.example .env
    ```
 
 ## Services Used
