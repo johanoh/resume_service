@@ -6,40 +6,113 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='DataRequest',
+            name="DataRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('error', 'error'), ('in_progress', 'in progress'), ('completed', 'completed')], default='pending', max_length=16)),
-                ('service', models.CharField(choices=[('global_tech_ats', 'Global Tech ATS')], default='global_tech_ats', max_length=32)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, editable=False
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("error", "error"),
+                            ("in_progress", "in progress"),
+                            ("completed", "completed"),
+                        ],
+                        default="pending",
+                        max_length=16,
+                    ),
+                ),
+                (
+                    "service",
+                    models.CharField(
+                        choices=[("global_tech_ats", "Global Tech ATS")],
+                        default="global_tech_ats",
+                        max_length=32,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='RawData',
+            name="RawData",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('data_format', models.CharField(choices=[('csv', 'csv'), ('json', 'json'), ('str', 'str')], default='json', max_length=8)),
-                ('data_type', models.CharField(choices=[('resume', 'resume')], default='resume', max_length=8)),
-                ('raw_data', models.TextField()),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('error', 'error'), ('in_progress', 'in progress'), ('completed', 'completed')], default='pending', max_length=16)),
-                ('data_request', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_collection.datarequest')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, editable=False
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "data_format",
+                    models.CharField(
+                        choices=[("csv", "csv"), ("json", "json"), ("str", "str")],
+                        default="json",
+                        max_length=8,
+                    ),
+                ),
+                (
+                    "data_type",
+                    models.CharField(
+                        choices=[("resume", "resume")], default="resume", max_length=8
+                    ),
+                ),
+                ("raw_data", models.TextField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("error", "error"),
+                            ("in_progress", "in progress"),
+                            ("completed", "completed"),
+                        ],
+                        default="pending",
+                        max_length=16,
+                    ),
+                ),
+                (
+                    "data_request",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="data_collection.datarequest",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

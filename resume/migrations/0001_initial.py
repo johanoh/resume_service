@@ -7,27 +7,55 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('data_collection', '0001_initial'),
+        ("data_collection", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Resume',
+            name="Resume",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('external_id', models.CharField(max_length=128, unique=True)),
-                ('skills', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128), size=None)),
-                ('work_experiences', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128), size=None)),
-                ('raw_data', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_collection.rawdata')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, editable=False
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("external_id", models.CharField(max_length=128, unique=True)),
+                (
+                    "skills",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=128), size=None
+                    ),
+                ),
+                (
+                    "work_experiences",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=128), size=None
+                    ),
+                ),
+                (
+                    "raw_data",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="data_collection.rawdata",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

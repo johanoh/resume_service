@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from core.views import MockResumeAPI
@@ -21,8 +22,12 @@ from resume.views import ResumeListAPI
 from data_collection.views import TriggerDataPullAPI
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/test-data/', MockResumeAPI.as_view(), name='test_data'),
-    path('api/v1/resumes/search/', ResumeListAPI.as_view(), name='resume_list'),
-    path('api/v1/data-collection/trigger/', TriggerDataPullAPI.as_view(), name='trigger_data_pull')
+    path("admin/", admin.site.urls),
+    path("api/v1/test-data/", MockResumeAPI.as_view(), name="test_data"),
+    path("api/v1/resumes/search/", ResumeListAPI.as_view(), name="resume_list"),
+    path(
+        "api/v1/data-collection/trigger/",
+        TriggerDataPullAPI.as_view(),
+        name="trigger_data_pull",
+    ),
 ]
