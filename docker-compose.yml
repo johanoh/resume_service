@@ -12,7 +12,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app  # Mount project directory inside the container
+      - .:/app
 
   # Celery Worker
   celery:
