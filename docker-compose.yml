@@ -1,0 +1,81 @@
+services:
+  # Resume Service
+  web:
+    build: .
+    container_name: django_app
+    restart: always
+    command: gunicorn --reload --bind 0.0.0.0:8000 resume_service.wsgi:application
+    env_file: .env
+    depends_on:
+      - db
+      - rabbitmq
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # Mount project directory inside the container
+
+  # Celery Worker
+  celery:
+    build: .
+    container_name: celery_worker
+    restart: always
+    command: bash -c "watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A resume_service worker --loglevel=info --concurrency=60 --autoscale=100,60"
+    env_file: .env
+    depends_on:
+      - web
+      - rabbitmq
+    volumes:
+      - .:/app 
+
+  # Celery Beat
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    restart: always
+    command: bash -c "watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A resume_service beat --loglevel=info"
+    env_file: .env
+    depends_on:
+      - celery
+    volumes:
+      - .:/app
+
+  # Celery Flower
+  flower:
+    build: .
+    container_name: celery_flower
+    restart: always
+    command: celery -A resume_service flower --broker_api=http://guest:guest@rabbitmq:15672/api/
+    env_file: .env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - rabbitmq
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_broker
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  # PostgreSQL
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    command: ["postgres", "-c", "max_connections=300"]
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
+
+
