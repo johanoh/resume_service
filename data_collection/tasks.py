@@ -13,7 +13,7 @@ from data_collection.models import RawData, DataRequest
 logger = logging.getLogger(__name__)
 
 @shared_task
-def trigger_data_pull(count=100, per_page=10, batch_size: int = 10):
+def trigger_data_pull(count=100, per_page=10, batch_size: int = 10, error_mode: bool = False):
     data_request = DataRequest.objects.create()
     fetch_resumes_from_mock_api.apply_async(
         kwargs={
@@ -21,7 +21,8 @@ def trigger_data_pull(count=100, per_page=10, batch_size: int = 10):
             'count': count,
             'per_page': per_page,
             'batch_size': batch_size,
-            'page': 1 
+            'page': 1,
+            'error_mode': error_mode
         }
     )
 
@@ -32,12 +33,11 @@ def trigger_data_pull(count=100, per_page=10, batch_size: int = 10):
     retry_jitter=True,
     max_retries=5,
 )
-def fetch_resumes_from_mock_api(data_request_id: int, count: int = 100, per_page: int = 10, page: int = 1, batch_size=10, next_url=None):
+def fetch_resumes_from_mock_api(data_request_id: int, count: int = 100, per_page: int = 10, page: int = 1, batch_size=10, error_mode: bool = False, next_url=None):
     try:
-
         if next_url:
             next_url.replace('localhost', 'web')
-        url = next_url or f"http://web:8000/api/v1/test-data?count={count}&per_page={per_page}&page={page}"  # ran into docker networking issue, easier to use container name 
+        url = next_url or f"http://web:8000/api/v1/test-data?count={count}&per_page={per_page}&page={page}&errors={error_mode}"  # ran into docker networking issue, easier to use container name 
 
         response = requests.get(url)
         api_latency = random.uniform(0.05, 0.2)
@@ -69,7 +69,7 @@ def fetch_resumes_from_mock_api(data_request_id: int, count: int = 100, per_page
                     'count': count,
                     'per_page': per_page,
                     'batch_size': batch_size,
-                    'next_url': next_page_url 
+                    'next_url': next_page_url
                 }
             )
         else:
