@@ -34,16 +34,6 @@ def process_resumes(raw_data_id: int, batch_size: int = 1, sleep_time: int = 2):
             }
         )
 
-    raw_data = data_request.raw_data.all()
-    if (
-        raw_data.filter(status=Statuses.ERROR).distinct("status").exists()
-    ):  # check statuses of all raw data and set the data request to the right status
-        data_request.status = Statuses.ERROR
-        data_request.save()
-    if raw_data.filter(status=Statuses.PROCESSED).distinct("status").exists():
-        data_request.status = Statuses.PROCESSED
-        data_request.save()
-
 
 @shared_task
 def batch_process_resumes(raw_resumes: list, raw_data_id: int, sleep_time: int = 2):
@@ -73,5 +63,18 @@ def batch_process_resumes(raw_resumes: list, raw_data_id: int, sleep_time: int =
         )
 
         if raw_data.status != Statuses.ERROR:
-            raw_data.status = Statuses.PROCESSED
+            raw_data.status = Statuses.COMPLETED
         raw_data.save()
+
+    data_request = raw_data.data_request
+    if (
+        data_request.raw_data.filter(status=Statuses.ERROR).distinct("status").exists()
+    ):  # check statuses of all raw data and set the data request to the right status, #this can be improved
+        data_request.status = Statuses.ERROR
+        data_request.save()
+        return
+
+    if data_request.raw_data.filter(status=Statuses.COMPLETED).count() == data_request.raw_data.count():
+        data_request.status = Statuses.COMPLETED
+        data_request.save()
+        return
